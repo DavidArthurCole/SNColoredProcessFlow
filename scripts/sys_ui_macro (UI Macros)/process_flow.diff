@@ -1,0 +1,37 @@
+diff --git a/./process_flow-OOB.xml b/./process_flow_modified.xml
+index 5e5119c..a40dcd8 100644
+--- a/./process_flow-OOB.xml
++++ b/./process_flow_modified.xml
+@@ -31,10 +31,29 @@
+ 					<j2:set var="jvar_flow_stage" value="${gs.getMessage('Next stage')}"/>
+ 				</j2:otherwise>
+ 			</j2:choose>
+-			<li class="$[jvar_flow_class]" data-state="$[jvar_flow.getParameter('state')]">
+-				<a tabindex="-1" role="presentation" aria-disabled="true"
+-				   aria-label="$[jvar_flow_stage] $[jvar_flow.getLabel()] $[jvar_flow_step]">
++
++			<!-- Not OOB section entirely -->
++			<j2:set var="jvar_rgb_triplet" value="$[jvar_flow.getParameter('rgb_triplet')]"/>
++			<j2:set var="jvar_a_style" value=""/>
++			<j2:set var="jvar_li_style" value=""/>
++			<j2:if test="$[jvar_flow.getParameter('state') == 'current' &amp;&amp; jvar_rgb_triplet != null]">
++				<j2:set var="jvar_a_style" value="background-color: rgb($[jvar_rgb_triplet]) !important;"/>
++				<j2:set var="jvar_li_style" value="--now-color_selection--primary-2: $[jvar_rgb_triplet];"/>
++			</j2:if>
++			<!-- End Not OOB -->
++
++			<!-- OOB Code:
++				<li class="$[jvar_flow_class]" data-state="$[jvar_flow.getParameter('state')]">
++			-->
++			<li class="$[jvar_flow_class]" data-state="$[jvar_flow.getParameter('state')]" style="$[jvar_li_style]">
++				<!-- OOB Code:
++					<a tabindex="-1" role="presentation" aria-disabled="true"
++					aria-label="$[jvar_flow_stage] $[jvar_flow.getLabel()] $[jvar_flow_step]">
+ 					$[jvar_flow.getLabel()]
++				</a>-->
++				<a tabindex="-1" role="presentation" aria-disabled="true"
++				aria-label="$[jvar_flow_stage] $[jvar_flow.getLabel()] $[jvar_flow_step]" style="$[jvar_a_style]">
++				$[jvar_flow.getLabel()]
+ 				</a>
+ 			</li>
+ 		</j2:forEach>

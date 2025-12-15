@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<j:jelly xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null" trim="false">
+	<g2:evaluate var="jvar_flows" jelly="true" object="true">
+        var flows = null;
+        var functionName = current.getRecordClassName() + "_ProcessFlowList";
+        var func = GlideController.getGlobal(functionName);
+         if (typeof func == 'function') {
+            flows = func();
+        }
+        flows;
+	</g2:evaluate>
+	<j2:if test="$[jvar_flows == null]">
+		<g2:flow_formatter var="jvar_flows" table="$[${ref_parent}.getRecordClassName()]" current="$[${ref_parent}]"/>
+	</j2:if>
+    <j2:set var="jvar_flow_size" value="$[jvar_flows.size()]"/>
+<tr><td><table class="process-breadcrumb-table"><tr><td>
+	<ol tabindex="0" class="process-breadcrumb process-breadcrumb-border">
+		<j2:forEach items="$[jvar_flows]" var="jvar_flow" indexVar="jvar_index">
+			<j2:set var="jvar_flow_step" value="$[jvar_index + 1] ${gs.getMessage('of')} $[jvar_flow_size]"/>
+			<j2:choose>
+				<j2:when test="$[jvar_flow.getParameter('state') == 'current']">
+					<j2:set var="jvar_flow_class" value="active"/>
+					<j2:set var="jvar_flow_stage" value="${gs.getMessage('Current stage')}"/>
+				</j2:when>
+				<j2:when test="$[jvar_flow.getParameter('state') == 'past']">
+					<j2:set var="jvar_flow_class" value="completed disabled"/>
+					<j2:set var="jvar_flow_stage" value="${gs.getMessage('Previous stage')}"/>
+				</j2:when>
+				<j2:otherwise>
+					<j2:set var="jvar_flow_class" value="disabled"/>
+					<j2:set var="jvar_flow_stage" value="${gs.getMessage('Next stage')}"/>
+				</j2:otherwise>
+			</j2:choose>
+			<li class="$[jvar_flow_class]" data-state="$[jvar_flow.getParameter('state')]">
+				<a tabindex="-1" role="presentation" aria-disabled="true"
+				   aria-label="$[jvar_flow_stage] $[jvar_flow.getLabel()] $[jvar_flow_step]">
+					$[jvar_flow.getLabel()]
+				</a>
+			</li>
+		</j2:forEach>
+	</ol>
+</td></tr></table></td></tr>
+</j:jelly>
